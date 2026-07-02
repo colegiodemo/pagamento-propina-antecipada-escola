@@ -287,15 +287,9 @@
             min-width: 180px;
         }
 
-        /* Submit Button */
-        .action-container {
-            margin-top: 16px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
+        /* Botão Submit Atualizado com o Verde da imagem image_a3c8a3.png quando ativo */
         .btn-submit {
-            background-color: #1E3A8A;
+            background-color: #22C55E;
             color: #ffffff;
             border: 1px solid transparent;
             padding: 10px 24px;
@@ -313,11 +307,11 @@
             height: 16px;
             filter: brightness(0) invert(1);
         }
-        .btn-submit:hover {
-            background-color: #172d6b;
+        .btn-submit:hover:not(:disabled) {
+            background-color: #16a34a;
         }
-        .btn-submit:active {
-            background-color: #0f1e4a;
+        .btn-submit:active:not(:disabled) {
+            background-color: #15803d;
         }
         .btn-submit:disabled {
             background-color: #f3f2f1;
@@ -566,7 +560,7 @@
                 <label for="valorTotalInput">Valor Total a Pagar</label>
                 <div class="input-with-icon">
                     <img class="input-icon-img" src="https://img.icons8.com/material-rounded/64/1E3A8A/calculator.png" alt="Calculator Icon">
-                    <input type="text" id="valorTotalInput" readonly title="Valor total calculado" placeholder="0.00 Kz">
+                    <input type="text" id="valorTotalInput" readonly title="Valor total calculated" placeholder="0.00 Kz">
                 </div>
             </div>
         </div>
@@ -650,7 +644,6 @@
         </div>
     </div>
 
-    <!-- Ajuste: Nova nota menor dinamicamente preenchida substituindo o campo estático -->
     <div id="lblValidadeNota" style="font-size: 11px; color: #605e5c; margin: -10px 0 20px 4px; font-style: italic; line-height: 1.4;">
         *Referência de pagamento válida até: -
     </div>
@@ -683,7 +676,7 @@
     const statusLog = document.getElementById("statusLog");
     const submitBtn = document.getElementById("submitBtn");
     const precoMensalInput = document.getElementById("precoMensalInput");
-    const descuentoPercentInput = document.getElementById("descontoPercentInput");
+    const descontoPercentInput = document.getElementById("descontoPercentInput");
     const descontoValorInput = document.getElementById("descontoValorInput");
     const valorTotalInput = document.getElementById("valorTotalInput");
     const emailInput = document.getElementById("emailInput");
@@ -1065,7 +1058,7 @@
                 lblReferencia.innerText = responseData.Referencia || "-";
                 lblValor.innerText = angolanVisualAmount;
                 
-                // Ajuste: Alimentando a nova nota de validade dinamicamente
+                // Alimentando a nota de validade dinamicamente
                 lblValidadeNota.innerText = `*Referência de pagamento válida até: ${responseData.Validade || "-"}`;
                 
                 successFooterMessage.innerHTML = `Estes dados foram também enviados para <strong>${targetUserEmail}</strong>. Caso não receba a mensagem, verifique a pasta de spam ou contacte a secretaria.`;
