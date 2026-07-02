@@ -24,8 +24,9 @@
             overflow-y: auto;
         }
         
-        /* Largura do formulário mantida em 720px */
+        /* Largura do formulário mantida em 720px - Agora visível desde o carregamento inicial */
         .form-container, .success-panel {
+            display: block;
             width: 100%;
             max-width: 720px; 
             background: #ffffff;
@@ -36,6 +37,77 @@
             box-sizing: border-box;
             margin: 0 auto;
         }
+        
+        /* O painel de sucesso deve manter-se oculto inicialmente */
+        .success-panel {
+            display: none;
+        }
+
+        /* --- Modal Customizado de Confirmação Inicial com Bloqueio e Desfoque --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px); /* Cria o efeito visual de desfoque no formulário em segundo plano */
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            pointer-events: auto; /* Bloqueia cliques em qualquer elemento que esteja por baixo deste overlay */
+        }
+        .modal-box {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 4px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            border: 1px solid #edebe9;
+            width: 90%;
+            max-width: 440px;
+            box-sizing: border-box;
+            pointer-events: auto; /* Permite interação apenas dentro da caixa do pop-up */
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1E3A8A;
+            margin: 0 0 12px 0;
+        }
+        .modal-text {
+            font-size: 13px;
+            color: #323130;
+            line-height: 1.5;
+            margin: 0 0 24px 0;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .btn-modal-primary {
+            background-color: #1E3A8A;
+            color: #ffffff;
+            border: 1px solid transparent;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+        .btn-modal-primary:hover { background-color: #172d6b; }
+        .btn-modal-secondary {
+            background-color: #ffffff;
+            color: #323130;
+            border: 1px solid #8a8886;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        .btn-modal-secondary:hover { background-color: #f3f2f1; border-color: #323130; }
         
         /* Bloco de Título e Subtítulo Principal Alinhado à Esquerda e Sem Ícone */
         .title-block {
@@ -287,7 +359,7 @@
             min-width: 180px;
         }
 
-        /* Botão Submit Atualizado com o Verde da imagem image_a3c8a3.png quando ativo */
+        /* Botão Submit com o Verde #22C55E ativo */
         .btn-submit {
             background-color: #22C55E;
             color: #ffffff;
@@ -307,12 +379,8 @@
             height: 16px;
             filter: brightness(0) invert(1);
         }
-        .btn-submit:hover:not(:disabled) {
-            background-color: #16a34a;
-        }
-        .btn-submit:active:not(:disabled) {
-            background-color: #15803d;
-        }
+        .btn-submit:hover:not(:disabled) { background-color: #16a34a; }
+        .btn-submit:active:not(:disabled) { background-color: #15803d; }
         .btn-submit:disabled {
             background-color: #f3f2f1;
             color: #a19f9d;
@@ -339,7 +407,6 @@
 
         /* Painel de Sucesso */
         .success-panel {
-            display: none;
             background-color: #f2fbf4;
             border: 1px solid #107c41;
             box-shadow: 0 4px 16px rgba(16, 124, 65, 0.08);
@@ -424,8 +491,18 @@
 </head>
 <body>
 
+<div id="confirmationModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Confirmação</div>
+        <div class="modal-text">Deseja iniciar o processo de geração de uma referência para o pagamento antecipado das propinas?</div>
+        <div class="modal-actions">
+            <button type="button" id="btnModalBack" class="btn-modal-secondary">Não, voltar</button>
+            <button type="button" id="btnModalContinue" class="btn-modal-primary">Sim, continuar</button>
+        </div>
+    </div>
+</div>
+
 <div id="formBlock" class="form-container">
-    <!-- Cabeçalho Principal do Formulário - Sem Ícone e Alinhado à Esquerda -->
     <div class="title-block">
         <div class="title-container">
             <h2>Gerar Dados de Pagamento</h2>
@@ -433,7 +510,6 @@
         </div>
     </div>
 
-    <!-- Categoria 1 — Identificação do Aluno -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Identificação do Aluno</h3>
@@ -494,7 +570,6 @@
         </div>
     </div>
 
-    <!-- Categoria 2 — Detalhes do Pagamento -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Detalhes do Pagamento</h3>
@@ -560,13 +635,12 @@
                 <label for="valorTotalInput">Valor Total a Pagar</label>
                 <div class="input-with-icon">
                     <img class="input-icon-img" src="https://img.icons8.com/material-rounded/64/1E3A8A/calculator.png" alt="Calculator Icon">
-                    <input type="text" id="valorTotalInput" readonly title="Valor total calculated" placeholder="0.00 Kz">
+                    <input type="text" id="valorTotalInput" readonly title="Valor total calculado" placeholder="0.00 Kz">
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Categoria 3 — Contacto para Envio -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Contacto para Envio</h3>
@@ -592,7 +666,6 @@
         </div>
     </div>
 
-    <!-- Categoria 4 — Observações -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Observações</h3>
@@ -626,7 +699,6 @@
         </div>
     </div>
 
-    <!-- Caixa branca contendo os dados de pagamento -->
     <div class="payment-details-box">
         <p style="margin: 0 0 12px 0; font-size: 13px; color: #605e5c; line-height: 1.4;">Utilize os dados apresentados abaixo para efetuar o pagamento através dos canais da rede Multicaixa, nomeadamente ATM, Multicaixa Express ou Internet Banking.</p>
         
@@ -660,6 +732,11 @@
 <script>
     const powerAutomateUrl = "https://default67e1fc55c47043779ddd6922b3f149.70.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8329ef8341a646eb974b295e0831056e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Di6Vtp0vWT41O28L1xEyRy_xPtSiTnmKGN7iup5Q__Y";
     
+    // UI Modal Elements
+    const confirmationModal = document.getElementById("confirmationModal");
+    const btnModalContinue = document.getElementById("btnModalContinue");
+    const btnModalBack = document.getElementById("btnModalBack");
+
     // UI Panels Blocks
     const formBlock = document.getElementById("formBlock");
     const successPanel = document.getElementById("successPanel");
@@ -676,7 +753,7 @@
     const statusLog = document.getElementById("statusLog");
     const submitBtn = document.getElementById("submitBtn");
     const precoMensalInput = document.getElementById("precoMensalInput");
-    const descontoPercentInput = document.getElementById("descontoPercentInput");
+    const descuentoPercentInput = document.getElementById("descontoPercentInput");
     const descontoValorInput = document.getElementById("descontoValorInput");
     const valorTotalInput = document.getElementById("valorTotalInput");
     const emailInput = document.getElementById("emailInput");
@@ -720,6 +797,19 @@
     let selectedTurmaName = "";
     let selectedStudentName = "";
     let selectedStudentPayload = null;
+
+    // Fluxo do Modal Inicial
+    function setupInitialGate() {
+        btnModalContinue.addEventListener("click", function() {
+            confirmationModal.remove(); // Remove o pop-up desbloqueando o segundo plano
+            initFetch(); // Dispara a chamada ao servidor
+        });
+
+        btnModalBack.addEventListener("click", function() {
+            confirmationModal.remove();
+            history.back(); // Volta para a página anterior
+        });
+    }
 
     async function initFetch() {
         setFormDisabledState(true);
@@ -1058,7 +1148,6 @@
                 lblReferencia.innerText = responseData.Referencia || "-";
                 lblValor.innerText = angolanVisualAmount;
                 
-                // Alimentando a nota de validade dinamicamente
                 lblValidadeNota.innerText = `*Referência de pagamento válida até: ${responseData.Validade || "-"}`;
                 
                 successFooterMessage.innerHTML = `Estes dados foram também enviados para <strong>${targetUserEmail}</strong>. Caso não receba a mensagem, verifique a pasta de spam ou contacte a secretaria.`;
@@ -1107,7 +1196,8 @@
         validateForm();
     });
 
-    window.addEventListener("DOMContentLoaded", initFetch);
+    // Inicialização segura
+    window.addEventListener("DOMContentLoaded", setupInitialGate);
 </script>
 
 </body>
