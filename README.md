@@ -1,2 +1,2 @@
 # pagamento-propina-antecipada-escola
-Forulário de pagamento de propinas antecipada
+Formulário de pagamento de propinas antecipada
