@@ -26,8 +26,9 @@ A arquitectura da solução é minimalista, segura e distribuída em três compo
 * **Cálculo de Desconto Progressivo:** Motor de cálculo interno que avalia o número de meses seleccionados e aplica a percentagem de desconto configurada para o perfil do aluno.
 * **Campos Dinâmicos de Apenas Leitura:** Atualização instantânea dos campos de controlo: *Desconto Aplicado (%)*, *Valor do Desconto* e *Valor Total a Pagar*.
 * **Formatação Monetária Angolana:** Todos os valores monetários são exibidos no padrão de leitura de Angola (ex: `12.500,00 Kz`).
-* **Painel de Sucesso Otimizado:** Exibição imediata da Entidade, Referência, Valor e a nota de validade logo após a submissão, sem que o utilizador necessite de fazer scroll na página do SharePoint.
-* **Gestão de Estados (Loading & Erros):** Bloqueio completo dos controlos do formulário durante as chamadas assíncronas e exibição de mensagens de erro amigáveis em caso de falhas de comunicação.
+* **Painel de Sucesso Georreferenciado:** Exibição imediata da Entidade, Referência, Valor e a nota de validade logo após a submissão. O painel aterra fixo a `250px` do topo, garantindo visibilidade total na área útil do *iframe* sem necessidade de scroll.
+* **Consistência Cromática (image_fa8f86.png):** O valor monetário final no painel de sucesso adota rigorosamente a cor cinza-escuro padrão (`#323130`), unificando a leitura visual com os campos de Entidade e Referência.
+* **Gestão de Estados (Loading & Erros):** Bloqueio completo dos controlo do formulário durante as chamadas assíncronas e exibição de mensagens de erro amigáveis em caso de falhas de comunicação.
 
 ---
 
@@ -65,25 +66,27 @@ Disparado quando o utilizador clica em "Sim, continuar" no pop-up de entrada.
 
 ### 4.2. Submissão do Formulário e Requisição de Referência
 
-Disparado ao clicar no botão verde "Gerar Dados de Pagamento".
+Disparado ao clicar no botão verde "Gerar Dados de Pagamento". O payload extrai o identificador numérico real do aluno (`NumeroAluno`) devolvido no arranque e contabiliza os metadados financeiros calculados em memória.
 
 **Pedido (POST):**
 
 ```json
 {
   "Flag": "GetPaymentReference",
-  "Servico": "Propina Antecipada",
-  "Classe": "10ª Classe",
-  "Turma": "A",
-  "NomeDoAluno": "Nome Completo do Aluno",
-  "NumeroAluno": "Nome Completo do Aluno",
-  "ID": "125",
-  "Telefone": "9XXXXXXXX",
+  "Servico": "Propina-Antecipada",
+  "Classe": "3ª Classe",
+  "Turma": "3-B",
+  "NomeDoAluno": "Brígida Pinto",
+  "NumeroAluno": "8",
+  "ID": "38",
+  "Telefone": "930803636",
   "Email": "encarregado@exemplo.com",
-  "ValorTotal": "125000.00",
-  "EntidadeMcx": "11223",
+  "ValorTotal": "387000.00",
+  "ValorDesconto": "12500.00",
+  "EntidadeMcx": "30067",
   "Notes": "Observações textuais opcionais introduzidas pelo utilizador",
   "MesAntecipado": "Janeiro,Fevereiro,Março",
+  "NumMesesAnticipados": "3",
   "Source": "[CHAVE_DE_AUTENTICAÇÃO_RESTRITA]"
 }
 
@@ -93,10 +96,10 @@ Disparado ao clicar no botão verde "Gerar Dados de Pagamento".
 
 ```json
 {
-  "Entidade": "11223",
-  "Referencia": "999888777",
-  "Valor": 125000,
-  "Validade": "31-12-2026"
+  "Entidade": "30067",
+  "Referencia": "922273105",
+  "Valor": 387000,
+  "Validade": "18-07-2026"
 }
 
 ```
@@ -121,7 +124,7 @@ Para embutir este formulário numa página do SharePoint, siga os passos abaixo:
 
 ```
 
-> **Nota de Configuração:** A propriedade `height="780px"` é a recomendada para garantir que o formulário, o pop-up de confirmação e o painel de sucesso sejam renderizados sem quebras visuais e fiquem inteiramente dentro do campo de visão inicial do utilizador.
+> **Nota de Configuração:** A propriedade `height="780px"` associada à ancoragem absoluta a `250px` do painel de sucesso garante que todo o desfecho da operação seja assistido pelo utilizador logo no primeiro carregamento visual do SharePoint.
 
 ---
 
@@ -148,10 +151,9 @@ Sempre que for necessário efetuar alterações no design ou na lógica do formu
 ## 8. Escopo do Serviço
 
 > [!IMPORTANT]
-> Este formulário e este repositório são **exclusivos e dedicados** ao serviço de **Propina Antecipada**.
+> Este formulário e este repositório são **exclusivos e dedicados** ao serviço de **Propina-Antecipada**.
 > Outros serviços da instituição (como matrículas, taxas de exames ou emissão de declarações) seguem regras de negócio, tabelas de descontos e fluxos de aprovação distintos. Por esse motivo, serão geridos em formulários independentes e alojados em repositórios separados para garantir a modularidade e integridade do sistema.
 
 ```
 
 ```
-
