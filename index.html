@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
+<!DOCTYPE html><html lang="pt"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerar Dados de Pagamento</title>
@@ -22,7 +20,7 @@
             box-sizing: border-box;
             padding: 24px 16px;
             overflow-y: auto;
-            position: relative; /* Âncora de coordenadas para elementos absolutos (modal e painel de sucesso) */
+            position: relative; /* Âncora de coordenadas para elements absolutos (modal e painel de sucesso) */
         }
         
         /* Largura do formulário mantida em 720px */
@@ -260,6 +258,16 @@
             line-height: 1.3;
         }
 
+        /* Mensagem de Erro de Validação */
+        .error-message {
+            display: none;
+            color: #DC2626;
+            font-size: 12px;
+            margin-top: 4px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
         /* Dropdowns Customizados Pesquisáveis e Reutilizáveis */
         .custom-dropdown-container {
             position: relative;
@@ -473,8 +481,9 @@
             font-size: 14px;
             word-break: break-all;
         }
+        /* Correção cromática: o valor final do campo Valor herda o cinzento #323130 para total consistência */
         .payment-value.amount {
-            color: #1E3A8A;
+            color: #323130;
             font-size: 15px;
             font-weight: normal;
         }
@@ -502,11 +511,7 @@
             background-color: #f3f2f1;
             border-color: #323130;
         }
-    </style>
-</head>
-<body>
-
-<div id="formBlock" class="form-container">
+    </style></head><body><div id="formBlock" class="form-container">
     <div class="title-block">
         <div class="title-container">
             <h2>Gerar Dados de Pagamento</h2>
@@ -639,7 +644,7 @@
                 <label for="valorTotalInput">Valor Total a Pagar</label>
                 <div class="input-with-icon">
                     <img class="input-icon-img" src="https://img.icons8.com/material-rounded/64/1E3A8A/calculator.png" alt="Calculator Icon">
-                    <input type="text" id="valorTotalInput" readonly title="Valor total calculado" placeholder="0.00 Kz">
+                    <input type="text" id="valorTotalInput" readonly title="Valor total calculated" placeholder="0.00 Kz">
                 </div>
             </div>
         </div>
@@ -666,6 +671,7 @@
                     <img class="input-icon-img" src="https://img.icons8.com/material-rounded/64/1E3A8A/ok.png" alt="Ok Icon">
                     <input type="email" id="emailConfirmInput" disabled placeholder="exemplo@escola.com" title="A carregar...">
                 </div>
+                <div id="emailError" class="error-message">O e-mail inserido não coincide com o endereço indicado no campo anterior.</div>
             </div>
         </div>
     </div>
@@ -692,10 +698,7 @@
         </button>
     </div>
     
-    <div id="statusLog" class="status-message">A preparar o formulário...</div>
-</div>
-
-<div id="successPanel" class="success-panel">
+    <div id="statusLog" class="status-message">A preparar o formulário...</div></div><div id="successPanel" class="success-panel">
     <div class="success-header">
         <img class="success-icon" src="https://img.icons8.com/material-rounded/64/22C55E/checked.png" alt="Checked Icon">
         <div class="success-title-container">
@@ -730,10 +733,7 @@
 
     <div class="action-container" style="margin-top: 0;">
         <button type="button" id="resetFormBtn" class="btn-secondary">Gerar Nova Referência</button>
-    </div>
-</div>
-
-<div id="confirmationModal" class="modal-overlay">
+    </div></div><div id="confirmationModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-title">Confirmação</div>
         <div class="modal-text">Pretende gerar uma referência para o pagamento antecipado das propinas?</div>
@@ -741,10 +741,7 @@
             <button type="button" id="btnModalBack" class="btn-modal-secondary">Cancelar</button>
             <button type="button" id="btnModalContinue" class="btn-modal-primary">Sim, continuar</button>
         </div>
-    </div>
-</div>
-
-<script>
+    </div></div><script>
     const powerAutomateUrl = "https://default67e1fc55c47043779ddd6922b3f149.70.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8329ef8341a646eb974b295e0831056e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Di6Vtp0vWT41O28L1xEyRy_xPtSiTnmKGN7iup5Q__Y";
     
     // UI Modal Elements
@@ -773,6 +770,7 @@
     const valorTotalInput = document.getElementById("valorTotalInput");
     const emailInput = document.getElementById("emailInput");
     const emailConfirmInput = document.getElementById("emailConfirmInput");
+    const emailError = document.getElementById("emailError");
     const observacoesTextarea = document.getElementById("observacoesTextarea");
 
     // UI Elements Multi-Select (Meses)
@@ -1127,15 +1125,45 @@
         currentRawTotalValue = 0;
         currentRawDiscountValue = 0;
         emailInput.value = ""; emailConfirmInput.value = ""; observacoesTextarea.value = "";
+        emailError.style.display = "none";
     }
 
-    emailInput.addEventListener("input", validateForm);
+    // Validação específica para o comportamento do evento blur
+    function checkEmailMatch() {
+        const emailVal = emailInput.value.trim().toLowerCase();
+        const confirmVal = emailConfirmInput.value.trim().toLowerCase();
+        
+        if (confirmVal !== "" && emailVal !== confirmVal) {
+            emailError.style.display = "block";
+            return false;
+        } else {
+            emailError.style.display = "none";
+            return true;
+        }
+    }
+
+    emailConfirmInput.addEventListener("blur", checkEmailMatch);
+    
+    emailInput.addEventListener("input", function() {
+        if (emailError.style.display === "block") {
+            const emailVal = emailInput.value.trim().toLowerCase();
+            const confirmVal = emailConfirmInput.value.trim().toLowerCase();
+            if (emailVal === confirmVal) {
+                emailError.style.display = "none";
+            }
+        }
+        validateForm();
+    });
+    
     emailConfirmInput.addEventListener("input", validateForm);
 
     function validateForm() {
         let isValid = !!(selectedClasseName && selectedTurmaName && selectedStudentName);
         const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (getSelectedMonths().length === 0 || !emailInput.value || !emailConfirmInput.value || emailInput.value !== emailConfirmInput.value || !emailReg.test(emailInput.value)) {
+        const emailVal = emailInput.value.trim().toLowerCase();
+        const confirmVal = emailConfirmInput.value.trim().toLowerCase();
+        
+        if (getSelectedMonths().length === 0 || !emailInput.value || !emailConfirmInput.value || emailVal !== confirmVal || !emailReg.test(emailInput.value)) {
             isValid = false;
         }
         submitBtn.disabled = !isValid;
@@ -1143,14 +1171,21 @@
 
     // --- SUBMISSÃO ---
     submitBtn.addEventListener("click", async function() {
+        // Força a verificação mecânica de correspondência no clique (caso o utilizador mude de campo diretamente para o botão)
+        if (!checkEmailMatch()) {
+            this.disabled = true;
+            return;
+        }
+
         this.disabled = true; setFormDisabledState(true);
         showStatus("A processar pedido... Por favor aguarde.", "#605e5c", "#f3f2f1");
 
         const targetUserEmail = emailInput.value || "";
         const selectedMonthsArray = getSelectedMonths();
         
-        // Mapeamento corrigido para o campo Servico ("Propina-Antecipada")
-        // Adição do campo ValorDesconto lido da memória em conformidade com a formatação do ValorTotal
+        // Extrai o valor base diretamente da memória do estudante ativo
+        const rawInitialStudentValue = selectedStudentPayload ? Number(selectedStudentPayload.Valor) : 0;
+        
         const finalSubmissionBody = {
             "Flag": "GetPaymentReference", 
             "Servico": "Propina-Antecipada",
@@ -1161,6 +1196,7 @@
             "ID": String(selectedStudentPayload && selectedStudentPayload.ID !== null ? selectedStudentPayload.ID : ""),
             "Telefone": String(selectedStudentPayload ? selectedStudentPayload.Telefone : ""),
             "Email": String(targetUserEmail), 
+            "Valor": String(rawInitialStudentValue.toFixed(2)),
             "ValorTotal": String(currentRawTotalValue.toFixed(2)),
             "ValorDesconto": String(currentRawDiscountValue.toFixed(2)),
             "EntidadeMcx": String(selectedStudentPayload && selectedStudentPayload.EntidadeMcx !== null ? selectedStudentPayload.EntidadeMcx : ""),
@@ -1238,8 +1274,4 @@
     });
 
     // Inicialização segura
-    window.addEventListener("DOMContentLoaded", setupInitialGate);
-</script>
-
-</body>
-</html>
+    window.addEventListener("DOMContentLoaded", setupInitialGate);</script></body></html>
