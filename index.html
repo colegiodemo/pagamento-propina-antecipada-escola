@@ -49,21 +49,19 @@
             box-shadow: 0 4px 16px rgba(16, 124, 65, 0.08);
         }
 
-        /* --- Modal Customizado de Confirmação Inicial com Bloqueio e Desfoque --- */
+        /* --- Modal Customizado de Confirmação Inicial com Bloqueio e Transparência Total --- */
         .modal-overlay {
             position: absolute; 
             top: 140px; 
             left: 0; 
             width: 100%; 
             height: calc(100% - 140px); 
-            background-color: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px); 
-            -webkit-backdrop-filter: blur(4px);
+            background-color: transparent; /* Alterado para transparente: sem cor nem opacidade */
             display: flex;
             justify-content: center;
             align-items: flex-start; 
             z-index: 9999; /* Prioridade máxima absoluta no topo da página */
-            pointer-events: auto; 
+            pointer-events: auto; /* Mantém o bloqueio completo de interacção com os campos de fundo */
             padding-top: 20px; 
             box-sizing: border-box;
         }
@@ -1200,7 +1198,7 @@
             "ValorTotal": String(currentRawTotalValue.toFixed(2)),
             "ValorDesconto": String(currentRawDiscountValue.toFixed(2)),
             "EntidadeMcx": String(selectedStudentPayload && selectedStudentPayload.EntidadeMcx !== null ? selectedStudentPayload.EntidadeMcx : ""),
-            "Banco": String(selectedStudentPayload && selectedStudentPayload.Banco ? selectedStudentPayload.Banco : ""), // Novo campo de sistema adicionado de forma silenciosa
+            "Banco": String(selectedStudentPayload && selectedStudentPayload.Banco ? selectedStudentPayload.Banco : ""), // Corrigido mapeamento direto do flow do Power Automate
             "Notes": String(observacoesTextarea.value || ""), 
             "MesAntecipado": String(selectedMonthsArray.join(",")),
             "NumMesesAnticipados": String(selectedMonthsArray.length),
