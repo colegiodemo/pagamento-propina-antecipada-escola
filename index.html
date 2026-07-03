@@ -45,7 +45,7 @@
             top: 140px; /* Alinhado estrategicamente ao nível dos Detalhes de Pagamento */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9995;
+            z-index: 9990; /* Ajustado para não colidir com o fluxo do modal inicial */
             background-color: #f2fbf4;
             border: 1px solid #107c41;
             box-shadow: 0 4px 16px rgba(16, 124, 65, 0.08);
@@ -64,7 +64,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start; 
-            z-index: 9999;
+            z-index: 9999; /* Prioridade máxima absoluta no topo da página */
             pointer-events: auto; 
             padding-top: 20px; 
             box-sizing: border-box;
@@ -78,6 +78,8 @@
             width: 90%;
             max-width: 440px;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10000; /* Garante que a caixa interna flutua acima do próprio overlay */
             pointer-events: auto; 
         }
         .modal-title {
@@ -96,6 +98,8 @@
             display: flex;
             justify-content: flex-end;
             gap: 12px;
+            position: relative;
+            z-index: 10001;
         }
         .btn-modal-primary {
             background-color: #1E3A8A;
@@ -106,6 +110,8 @@
             font-weight: 600;
             border-radius: 2px;
             cursor: pointer;
+            position: relative;
+            z-index: 10002;
             transition: background-color 0.1s ease;
         }
         .btn-modal-primary:hover { background-color: #172d6b; }
@@ -118,6 +124,8 @@
             font-weight: 600;
             border-radius: 2px;
             cursor: pointer;
+            position: relative;
+            z-index: 10002;
             transition: all 0.1s ease;
         }
         .btn-modal-secondary:hover { background-color: #f3f2f1; border-color: #323130; }
@@ -498,17 +506,6 @@
 </head>
 <body>
 
-<div id="confirmationModal" class="modal-overlay">
-    <div class="modal-box">
-        <div class="modal-title">Confirmação</div>
-        <div class="modal-text">Pretende gerar uma referência para o pagamento antecipado das propinas?</div>
-        <div class="modal-actions">
-            <button type="button" id="btnModalBack" class="btn-modal-secondary">Cancelar</button>
-            <button type="button" id="btnModalContinue" class="btn-modal-primary">Sim, continuar</button>
-        </div>
-    </div>
-</div>
-
 <div id="formBlock" class="form-container">
     <div class="title-block">
         <div class="title-container">
@@ -736,6 +733,17 @@
     </div>
 </div>
 
+<div id="confirmationModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Confirmação</div>
+        <div class="modal-text">Pretende gerar uma referência para o pagamento antecipado das propinas?</div>
+        <div class="modal-actions">
+            <button type="button" id="btnModalBack" class="btn-modal-secondary">Cancelar</button>
+            <button type="button" id="btnModalContinue" class="btn-modal-primary">Sim, continuar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const powerAutomateUrl = "https://default67e1fc55c47043779ddd6922b3f149.70.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8329ef8341a646eb974b295e0831056e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Di6Vtp0vWT41O28L1xEyRy_xPtSiTnmKGN7iup5Q__Y";
     
@@ -760,7 +768,7 @@
     const statusLog = document.getElementById("statusLog");
     const submitBtn = document.getElementById("submitBtn");
     const precoMensalInput = document.getElementById("precoMensalInput");
-    const descuentoPercentInput = document.getElementById("descontoPercentInput");
+    const descontoPercentInput = document.getElementById("descontoPercentInput");
     const descontoValorInput = document.getElementById("descontoValorInput");
     const valorTotalInput = document.getElementById("valorTotalInput");
     const emailInput = document.getElementById("emailInput");
@@ -807,12 +815,14 @@
 
     // Fluxo do Modal Inicial
     function setupInitialGate() {
-        btnModalContinue.addEventListener("click", function() {
-            confirmationModal.remove(); // Remove o pop-up desbloqueando o segundo plano
+        btnModalContinue.addEventListener("click", function(e) {
+            e.stopPropagation();
+            confirmationModal.remove(); // Remove o pop-up libertando o segundo plano
             initFetch(); // Dispara a chamada ao servidor
         });
 
-        btnModalBack.addEventListener("click", function() {
+        btnModalBack.addEventListener("click", function(e) {
+            e.stopPropagation();
             confirmationModal.remove();
             history.back(); // Volta para a página anterior
         });
@@ -1124,4 +1134,95 @@
     // --- SUBMISSÃO ---
     submitBtn.addEventListener("click", async function() {
         this.disabled = true; setFormDisabledState(true);
-        showStatus("A processar pedido... Por favor aguarde.", "#605e5c
+        showStatus("A processar pedido... Por favor aguarde.", "#605e5c", "#f3f2f1");
+
+        const targetUserEmail = emailInput.value || "";
+        let rawTotalValue = valorTotalInput.value || "";
+        let formattedTotalValue = rawTotalValue.replace(/kz/gi, "").replace(/\s+/g, "").replace(",", ".");
+
+        const finalSubmissionBody = {
+            "Flag": "GetPaymentReference", "Servico": "Propina Antecipada",
+            "Classe": String(selectedClasseName), "Turma": String(selectedTurmaName),
+            "NomeDoAluno": String(selectedStudentPayload ? selectedStudentPayload.NomeDoAluno : ""),
+            "NumeroAluno": String(selectedStudentPayload ? selectedStudentPayload.NomeDoAluno : ""),
+            "ID": String(selectedStudentPayload && selectedStudentPayload.ID !== null ? selectedStudentPayload.ID : ""),
+            "Telefone": String(selectedStudentPayload ? selectedStudentPayload.Telefone : ""),
+            "Email": String(targetUserEmail), "ValorTotal": String(formattedTotalValue),
+            "EntidadeMcx": String(selectedStudentPayload && selectedStudentPayload.EntidadeMcx !== null ? selectedStudentPayload.EntidadeMcx : ""),
+            "Notes": String(observacoesTextarea.value || ""), "MesAntecipado": String(getSelectedMonths().join(",")),
+            "Source": "F9A3C7E1D0B4F6A2C8E1D9F7A3B6C4E0F1A9D3C7E5B2F8A0C6D4E1B9F703A5C2"
+        };
+
+        try {
+            const response = await fetch(powerAutomateUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(finalSubmissionBody) });
+            if (response.ok) {
+                const responseData = await response.json();
+                
+                let rawReturnedAmount = Number(responseData.Valor) || 0;
+                let angolanVisualAmount = rawReturnedAmount.toLocaleString('pt-PT', { minimumFractionDigits: 2 }).replace(/\u00a0/g, " ") + " Kz";
+
+                lblEntidade.innerText = responseData.Entidade || "-";
+                lblReferencia.innerText = responseData.Referencia || "-";
+                lblValor.innerText = angolanVisualAmount;
+                
+                lblValidadeNota.innerText = `*Referência de pagamento válida até: ${responseData.Validade || "-"}`;
+                
+                successFooterMessage.innerHTML = `Estes dados foram também enviados para <strong>${targetUserEmail}</strong>. Caso não receba a mensagem, verifique a pasta de spam ou contacte a secretaria.`;
+
+                // O formulário perde opacidade e interação mas mantém a sua altura para suportar o iframe do SharePoint
+                formBlock.style.opacity = "0";
+                formBlock.style.pointerEvents = "none";
+                
+                // O painel de sucesso surge ancorado de forma absoluta no viewport inicial (140px do topo)
+                successPanel.style.display = "block";
+
+            } else { throw new Error(); }
+        } catch (err) {
+            showStatus("Erro ao enviar pedido. Por favor, tente novamente.", "#a80000", "#fde7e9");
+            setFormDisabledState(false); validateForm();
+        }
+    });
+
+    // Reposição
+    resetFormBtn.addEventListener("click", function() {
+        selectedClasseName = "";
+        selectedTurmaName = "";
+        selectedStudentName = "";
+        selectedStudentPayload = null;
+
+        classeDropdownHeader.innerText = "Selecione a Classe";
+        classeDropdownHeader.setAttribute("title", "Selecione a Classe");
+        classeDropdownHeader.classList.remove("has-selection");
+        
+        turmaDropdownHeader.classList.add("disabled");
+        turmaDropdownHeader.innerText = "Selecione a Turma";
+        turmaDropdownHeader.setAttribute("title", "Aguardando Classe");
+        turmaDropdownHeader.classList.remove("has-selection");
+        
+        alunoDropdownHeader.classList.add("disabled");
+        alunoDropdownHeader.innerText = "Selecione o Aluno";
+        alunoDropdownHeader.setAttribute("title", "Aguardando Turma");
+        alunoDropdownHeader.classList.remove("has-selection");
+
+        resetPropinaForm();
+        setFormDisabledState(false);
+        
+        statusLog.style.display = "none";
+        statusLog.style.opacity = "1";
+
+        successPanel.style.display = "none";
+        
+        // Restaura a visibilidade e as ações do formulário padrão
+        formBlock.style.opacity = "1";
+        formBlock.style.pointerEvents = "auto";
+        
+        buildClasseList();
+        validateForm();
+    });
+
+    // Inicialização segura
+    window.addEventListener("DOMContentLoaded", setupInitialGate);
+</script>
+
+</body>
+</html>
