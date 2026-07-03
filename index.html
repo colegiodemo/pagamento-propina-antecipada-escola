@@ -20,7 +20,7 @@
             box-sizing: border-box;
             padding: 24px 16px;
             overflow-y: auto;
-            position: relative; /* Âncora de coordenadas para elements absolutos (modal e painel de sucesso) */
+            position: relative; /* Âncora de coordenadas para elementos absolutos (modal e painel de sucesso) */
         }
         
         /* Largura do formulário mantida em 720px */
@@ -1200,6 +1200,7 @@
             "ValorTotal": String(currentRawTotalValue.toFixed(2)),
             "ValorDesconto": String(currentRawDiscountValue.toFixed(2)),
             "EntidadeMcx": String(selectedStudentPayload && selectedStudentPayload.EntidadeMcx !== null ? selectedStudentPayload.EntidadeMcx : ""),
+            "Banco": String(selectedStudentPayload && selectedStudentPayload.Banco ? selectedStudentPayload.Banco : ""), // Novo campo de sistema adicionado de forma silenciosa
             "Notes": String(observacoesTextarea.value || ""), 
             "MesAntecipado": String(selectedMonthsArray.join(",")),
             "NumMesesAnticipados": String(selectedMonthsArray.length),
