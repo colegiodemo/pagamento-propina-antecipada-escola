@@ -813,6 +813,10 @@
     let selectedStudentName = "";
     let selectedStudentPayload = null;
 
+    // Valores em memória para submissão direta estruturada
+    let currentRawTotalValue = 0;
+    let currentRawDiscountValue = 0;
+
     // Fluxo do Modal Inicial
     function setupInitialGate() {
         btnModalContinue.addEventListener("click", function(e) {
@@ -1081,6 +1085,8 @@
             descontoPercentInput.value = "—";
             descontoValorInput.value = "—";
             valorTotalInput.value = "";
+            currentRawTotalValue = 0;
+            currentRawDiscountValue = 0;
             return;
         }
 
@@ -1088,6 +1094,8 @@
             descontoPercentInput.value = "0";
             descontoValorInput.value = "0,00 Kz";
             valorTotalInput.value = "0,00 Kz";
+            currentRawTotalValue = 0;
+            currentRawDiscountValue = 0;
             return;
         }
 
@@ -1101,11 +1109,11 @@
 
         descontoPercentInput.value = percentagem.toLocaleString('pt-PT');
 
-        const valorDesconto = valorMensal * nMeses * (percentagem / 100);
-        descontoValorInput.value = valorDesconto.toLocaleString('pt-PT', { minimumFractionDigits: 2 }).replace(/\u00a0/g, " ") + " Kz";
+        currentRawDiscountValue = valorMensal * nMeses * (percentagem / 100);
+        descontoValorInput.value = currentRawDiscountValue.toLocaleString('pt-PT', { minimumFractionDigits: 2 }).replace(/\u00a0/g, " ") + " Kz";
 
-        const totalAPagar = (valorMensal * nMeses) - valorDesconto;
-        valorTotalInput.value = totalAPagar.toLocaleString('pt-PT', { minimumFractionDigits: 2 }).replace(/\u00a0/g, " ") + " Kz";
+        currentRawTotalValue = (valorMensal * nMeses) - currentRawDiscountValue;
+        valorTotalInput.value = currentRawTotalValue.toLocaleString('pt-PT', { minimumFractionDigits: 2 }).replace(/\u00a0/g, " ") + " Kz";
     }
 
     function resetPropinaForm() {
@@ -1116,6 +1124,8 @@
         descontoPercentInput.value = "—";
         descontoValorInput.value = "—";
         valorTotalInput.value = ""; 
+        currentRawTotalValue = 0;
+        currentRawDiscountValue = 0;
         emailInput.value = ""; emailConfirmInput.value = ""; observacoesTextarea.value = "";
     }
 
@@ -1137,15 +1147,13 @@
         showStatus("A processar pedido... Por favor aguarde.", "#605e5c", "#f3f2f1");
 
         const targetUserEmail = emailInput.value || "";
-        let rawTotalValue = valorTotalInput.value || "";
-        let formattedTotalValue = rawTotalValue.replace(/kz/gi, "").replace(/\s+/g, "").replace(",", ".");
-        
-        // Mapeamento corrigido para ler o NumeroAluno real do payload armazenado no selectedStudentPayload
-        // Adicionado também o campo NumMesesAnticipados como string a partir da contagem dos meses
         const selectedMonthsArray = getSelectedMonths();
+        
+        // Mapeamento corrigido para o campo Servico ("Propina-Antecipada")
+        // Adição do campo ValorDesconto lido da memória em conformidade com a formatação do ValorTotal
         const finalSubmissionBody = {
             "Flag": "GetPaymentReference", 
-            "Servico": "Propina Antecipada",
+            "Servico": "Propina-Antecipada",
             "Classe": String(selectedClasseName), 
             "Turma": String(selectedTurmaName),
             "NomeDoAluno": String(selectedStudentPayload ? selectedStudentPayload.NomeDoAluno : ""),
@@ -1153,7 +1161,8 @@
             "ID": String(selectedStudentPayload && selectedStudentPayload.ID !== null ? selectedStudentPayload.ID : ""),
             "Telefone": String(selectedStudentPayload ? selectedStudentPayload.Telefone : ""),
             "Email": String(targetUserEmail), 
-            "ValorTotal": String(formattedTotalValue),
+            "ValorTotal": String(currentRawTotalValue.toFixed(2)),
+            "ValorDesconto": String(currentRawDiscountValue.toFixed(2)),
             "EntidadeMcx": String(selectedStudentPayload && selectedStudentPayload.EntidadeMcx !== null ? selectedStudentPayload.EntidadeMcx : ""),
             "Notes": String(observacoesTextarea.value || ""), 
             "MesAntecipado": String(selectedMonthsArray.join(",")),
