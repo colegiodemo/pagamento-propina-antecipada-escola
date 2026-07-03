@@ -1,4 +1,3 @@
-
 ```markdown
 # Sistema de Geração de Referências — Pagamento Antecipado de Propinas
 
