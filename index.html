@@ -24,7 +24,7 @@
             overflow-y: auto;
         }
         
-        /* Largura do formulário mantida em 720px - Agora visível desde o carregamento inicial */
+        /* Largura do formulário mantida em 720px - Visível desde o carregamento inicial */
         .form-container, .success-panel {
             display: block;
             width: 100%;
@@ -491,18 +491,20 @@
 </head>
 <body>
 
+<!-- Pop-up de Confirmação Obrigatório com Textos Ajustados -->
 <div id="confirmationModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-title">Confirmação</div>
-        <div class="modal-text">Deseja iniciar o processo de geração de uma referência para o pagamento antecipado das propinas?</div>
+        <div class="modal-text">Pretende gerar uma referência para o pagamento antecipado das propinas?</div>
         <div class="modal-actions">
-            <button type="button" id="btnModalBack" class="btn-modal-secondary">Não, voltar</button>
+            <button type="button" id="btnModalBack" class="btn-modal-secondary">Cancelar</button>
             <button type="button" id="btnModalContinue" class="btn-modal-primary">Sim, continuar</button>
         </div>
     </div>
 </div>
 
 <div id="formBlock" class="form-container">
+    <!-- Cabeçalho Principal do Formulário -->
     <div class="title-block">
         <div class="title-container">
             <h2>Gerar Dados de Pagamento</h2>
@@ -510,6 +512,7 @@
         </div>
     </div>
 
+    <!-- Categoria 1 — Identificação do Aluno -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Identificação do Aluno</h3>
@@ -570,6 +573,7 @@
         </div>
     </div>
 
+    <!-- Categoria 2 — Detalhes do Pagamento -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Detalhes do Pagamento</h3>
@@ -641,6 +645,7 @@
         </div>
     </div>
 
+    <!-- Categoria 3 — Contacto para Envio -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Contacto para Envio</h3>
@@ -666,6 +671,7 @@
         </div>
     </div>
 
+    <!-- Categoria 4 — Observações -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Observações</h3>
@@ -699,6 +705,7 @@
         </div>
     </div>
 
+    <!-- Caixa branca contendo os dados de pagamento -->
     <div class="payment-details-box">
         <p style="margin: 0 0 12px 0; font-size: 13px; color: #605e5c; line-height: 1.4;">Utilize os dados apresentados abaixo para efetuar o pagamento através dos canais da rede Multicaixa, nomeadamente ATM, Multicaixa Express ou Internet Banking.</p>
         
