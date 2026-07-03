@@ -38,14 +38,14 @@
             margin: 0 auto;
         }
         
-        /* Painel de sucesso otimizado com posicionamento absoluto para iFrame */
+        /* Painel de sucesso otimizado com alinhamento vertical na linha dos campos de Desconto/Total */
         .success-panel {
             display: none;
             position: absolute;
-            top: 140px; /* Alinhado estrategicamente ao nível dos Detalhes de Pagamento */
+            top: 250px; /* Ajustado cirurgicamente para alinhar com a linha intermédia do formulário */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9990; /* Ajustado para não colidir com o fluxo do modal inicial */
+            z-index: 9990; 
             background-color: #f2fbf4;
             border: 1px solid #107c41;
             box-shadow: 0 4px 16px rgba(16, 124, 65, 0.08);
@@ -1173,7 +1173,7 @@
                 formBlock.style.opacity = "0";
                 formBlock.style.pointerEvents = "none";
                 
-                // O painel de sucesso surge ancorado de forma absoluta no viewport inicial (140px do topo)
+                // O painel de sucesso surge ancorado de forma absoluta no viewport útil inicial (250px do topo)
                 successPanel.style.display = "block";
 
             } else { throw new Error(); }
