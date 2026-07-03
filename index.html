@@ -22,12 +22,11 @@
             box-sizing: border-box;
             padding: 24px 16px;
             overflow-y: auto;
-            position: relative; /* Adicionado para servir de âncora absoluta ao modal-overlay */
+            position: relative; /* Âncora de coordenadas para elementos absolutos (modal e painel de sucesso) */
         }
         
-        /* Largura do formulário mantida em 720px - Visível desde o carregamento inicial */
+        /* Largura do formulário mantida em 720px */
         .form-container, .success-panel {
-            display: block;
             width: 100%;
             max-width: 720px; 
             background: #ffffff;
@@ -39,27 +38,35 @@
             margin: 0 auto;
         }
         
-        /* O painel de sucesso deve manter-se oculto inicialmente */
+        /* Painel de sucesso otimizado com posicionamento absoluto para iFrame */
         .success-panel {
             display: none;
+            position: absolute;
+            top: 140px; /* Alinhado estrategicamente ao nível dos Detalhes de Pagamento */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9995;
+            background-color: #f2fbf4;
+            border: 1px solid #107c41;
+            box-shadow: 0 4px 16px rgba(16, 124, 65, 0.08);
         }
 
-        /* --- Modal Otimizado para iFrame (Posicionado no topo, abaixo do cabeçalho) --- */
+        /* --- Modal Customizado de Confirmação Inicial com Bloqueio e Desfoque --- */
         .modal-overlay {
-            position: absolute; /* Alterado de fixed para absolute para alinhar com o topo do documento */
-            top: 140px; /* Deslocamento estratégico para ficar logo abaixo do cabeçalho principal */
+            position: absolute; 
+            top: 140px; 
             left: 0; 
             width: 100%; 
-            height: calc(100% - 140px); /* Garante que cobre todo o resto do formulário abaixo do cabeçalho */
+            height: calc(100% - 140px); 
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px); 
             -webkit-backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Alinha o modal ao topo da sua área delimitada */
+            align-items: flex-start; 
             z-index: 9999;
             pointer-events: auto; 
-            padding-top: 20px; /* Pequeno respiro superior para o posicionamento da caixa */
+            padding-top: 20px; 
             box-sizing: border-box;
         }
         .modal-box {
@@ -211,7 +218,7 @@
             background-color: #ffffff;
             box-sizing: border-box;
             color: #323130;
-            transition: border-color 0.15s ease, opacity 0.15s ease;
+            transition: border-color 0.1s ease, opacity 0.15s ease;
         }
         textarea {
             resize: vertical;
@@ -411,12 +418,6 @@
             transition: opacity 1s ease;
         }
 
-        /* Painel de Sucesso */
-        .success-panel {
-            background-color: #f2fbf4;
-            border: 1px solid #107c41;
-            box-shadow: 0 4px 16px rgba(16, 124, 65, 0.08);
-        }
         .success-header {
             display: flex;
             align-items: flex-start;
@@ -1123,88 +1124,4 @@
     // --- SUBMISSÃO ---
     submitBtn.addEventListener("click", async function() {
         this.disabled = true; setFormDisabledState(true);
-        showStatus("A processar pedido... Por favor aguarde.", "#605e5c", "#f3f2f1");
-
-        const targetUserEmail = emailInput.value || "";
-        let rawTotalValue = valorTotalInput.value || "";
-        let formattedTotalValue = rawTotalValue.replace(/kz/gi, "").replace(/\s+/g, "").replace(",", ".");
-
-        const finalSubmissionBody = {
-            "Flag": "GetPaymentReference", "Servico": "Propina Antecipada",
-            "Classe": String(selectedClasseName), "Turma": String(selectedTurmaName),
-            "NomeDoAluno": String(selectedStudentPayload ? selectedStudentPayload.NomeDoAluno : ""),
-            "NumeroAluno": String(selectedStudentPayload ? selectedStudentPayload.NomeDoAluno : ""),
-            "ID": String(selectedStudentPayload && selectedStudentPayload.ID !== null ? selectedStudentPayload.ID : ""),
-            "Telefone": String(selectedStudentPayload ? selectedStudentPayload.Telefone : ""),
-            "Email": String(targetUserEmail), "ValorTotal": String(formattedTotalValue),
-            "EntidadeMcx": String(selectedStudentPayload && selectedStudentPayload.EntidadeMcx !== null ? selectedStudentPayload.EntidadeMcx : ""),
-            "Notes": String(observacoesTextarea.value || ""), "MesAntecipado": String(getSelectedMonths().join(",")),
-            "Source": "F9A3C7E1D0B4F6A2C8E1D9F7A3B6C4E0F1A9D3C7E5B2F8A0C6D4E1B9F703A5C2"
-        };
-
-        try {
-            const response = await fetch(powerAutomateUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(finalSubmissionBody) });
-            if (response.ok) {
-                const responseData = await response.json();
-                
-                let rawReturnedAmount = Number(responseData.Valor) || 0;
-                let angolanVisualAmount = rawReturnedAmount.toLocaleString('pt-PT', { minimumFractionDigits: 2 }).replace(/\u00a0/g, " ") + " Kz";
-
-                lblEntidade.innerText = responseData.Entidade || "-";
-                lblReferencia.innerText = responseData.Referencia || "-";
-                lblValor.innerText = angolanVisualAmount;
-                
-                lblValidadeNota.innerText = `*Referência de pagamento válida até: ${responseData.Validade || "-"}`;
-                
-                successFooterMessage.innerHTML = `Estes dados foram também enviados para <strong>${targetUserEmail}</strong>. Caso não receba a mensagem, verifique a pasta de spam ou contacte a secretaria.`;
-
-                formBlock.style.display = "none";
-                successPanel.style.display = "block";
-
-            } else { throw new Error(); }
-        } catch (err) {
-            showStatus("Erro ao enviar pedido. Por favor, tente novamente.", "#a80000", "#fde7e9");
-            setFormDisabledState(false); validateForm();
-        }
-    });
-
-    // Reposição
-    resetFormBtn.addEventListener("click", function() {
-        selectedClasseName = "";
-        selectedTurmaName = "";
-        selectedStudentName = "";
-        selectedStudentPayload = null;
-
-        classeDropdownHeader.innerText = "Selecione a Classe";
-        classeDropdownHeader.setAttribute("title", "Selecione a Classe");
-        classeDropdownHeader.classList.remove("has-selection");
-        
-        turmaDropdownHeader.classList.add("disabled");
-        turmaDropdownHeader.innerText = "Selecione a Turma";
-        turmaDropdownHeader.setAttribute("title", "Aguardando Classe");
-        turmaDropdownHeader.classList.remove("has-selection");
-        
-        alunoDropdownHeader.classList.add("disabled");
-        alunoDropdownHeader.innerText = "Selecione o Aluno";
-        alunoDropdownHeader.setAttribute("title", "Aguardando Turma");
-        alunoDropdownHeader.classList.remove("has-selection");
-
-        resetPropinaForm();
-        setFormDisabledState(false);
-        
-        statusLog.style.display = "none";
-        statusLog.style.opacity = "1";
-
-        successPanel.style.display = "none";
-        formBlock.style.display = "block";
-        
-        buildClasseList();
-        validateForm();
-    });
-
-    // Inicialização segura
-    window.addEventListener("DOMContentLoaded", setupInitialGate);
-</script>
-
-</body>
-</html>
+        showStatus("A processar pedido... Por favor aguarde.", "#605e5c
