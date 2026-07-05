@@ -29,7 +29,7 @@
             max-width: 720px; 
             background: #ffffff;
             padding: 24px;
-            border-radius: 4px;
+            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             border: 1px solid #edebe9;
             box-sizing: border-box;
@@ -68,7 +68,7 @@
         .modal-box {
             background: #ffffff;
             padding: 24px;
-            border-radius: 4px;
+            border-radius: 8px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.15);
             border: 1px solid #edebe9;
             width: 90%;
@@ -97,6 +97,8 @@
             position: relative;
             z-index: 10001;
         }
+        
+        /* Proteção explícita para evitar contaminação visual e quebra dos botões do Modal */
         .btn-modal-primary {
             background-color: #1E3A8A;
             color: #ffffff;
@@ -104,13 +106,17 @@
             padding: 8px 18px;
             font-size: 13px;
             font-weight: 600;
-            border-radius: 2px;
+            border-radius: 8px;
             cursor: pointer;
             position: relative;
             z-index: 10002;
+            width: auto;
+            display: inline-block;
+            box-sizing: border-box;
             transition: background-color 0.1s ease;
         }
         .btn-modal-primary:hover { background-color: #172d6b; }
+        
         .btn-modal-secondary {
             background-color: #ffffff;
             color: #323130;
@@ -118,10 +124,13 @@
             padding: 8px 18px;
             font-size: 13px;
             font-weight: 600;
-            border-radius: 2px;
+            border-radius: 8px;
             cursor: pointer;
             position: relative;
             z-index: 10002;
+            width: auto;
+            display: inline-block;
+            box-sizing: border-box;
             transition: all 0.1s ease;
         }
         .btn-modal-secondary:hover { background-color: #f3f2f1; border-color: #323130; }
@@ -189,7 +198,7 @@
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             font-size: 13px;
             color: #201f1e;
         }
@@ -205,7 +214,7 @@
         }
         .input-icon-img {
             position: absolute;
-            left: 12px;
+            left: 14px;
             width: 16px;
             height: 16px;
             pointer-events: none;
@@ -213,16 +222,17 @@
             z-index: 2;
         }
         
+        /* Nova estilização harmonizada dos inputs da imagem de referência */
         select, input, textarea {
             width: 100%;
-            padding: 10px 12px 10px 38px;
-            border: 1px solid #8a8886;
-            border-radius: 2px;
+            padding: 12px 14px 12px 42px;
+            border: 1px solid #C7D7F5;
+            border-radius: 8px;
             font-size: 14px;
-            background-color: #ffffff;
+            background-color: #F0F4FF;
             box-sizing: border-box;
             color: #323130;
-            transition: border-color 0.1s ease, opacity 0.15s ease;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
         }
         textarea {
             resize: vertical;
@@ -231,8 +241,8 @@
             padding-left: 14px;
         }
         input[readonly] {
-            background-color: #f3f2f1;
-            border-color: #a19f9d;
+            background-color: #E2ECFF;
+            border-color: #B9CEF3;
             color: #323130;
             cursor: not-allowed;
             font-weight: 600;
@@ -241,10 +251,11 @@
             border-color: #1E3A8A;
             outline: none;
             box-shadow: 0 0 0 1px #1E3A8A;
+            background-color: #ffffff;
         }
         select:disabled, input:disabled, textarea:disabled {
-            background-color: #f3f2f1;
-            border-color: #c8c6c4;
+            background-color: #E8EEFB;
+            border-color: #D3E0FA;
             color: #a19f9d;
             cursor: not-allowed;
         }
@@ -274,11 +285,11 @@
         
         .custom-dropdown-header {
             width: 100%;
-            padding: 10px 32px 10px 38px;
-            border: 1px solid #8a8886;
-            border-radius: 2px;
+            padding: 12px 32px 12px 42px;
+            border: 1px solid #C7D7F5;
+            border-radius: 8px;
             font-size: 14px;
-            background-color: #ffffff;
+            background-color: #F0F4FF;
             color: #323130;
             text-align: left;
             cursor: pointer;
@@ -294,14 +305,14 @@
             content: "▼";
             font-size: 10px;
             position: absolute;
-            right: 12px;
-            top: 14px;
+            right: 14px;
+            top: 16px;
             color: #605e5c;
             pointer-events: none;
         }
         .custom-dropdown-header.disabled {
-            background-color: #f3f2f1;
-            border-color: #c8c6c4;
+            background-color: #E8EEFB;
+            border-color: #D3E0FA;
             color: #a19f9d;
             cursor: not-allowed;
             pointer-events: none;
@@ -313,23 +324,24 @@
             left: 0;
             width: 100%;
             background: #ffffff;
-            border: 1px solid #8a8886;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border: 1px solid #C7D7F5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             z-index: 1000;
             max-height: 200px;
             overflow-y: auto;
             box-sizing: border-box;
-            border-radius: 0 0 2px 2px;
+            border-radius: 8px;
+            margin-top: 4px;
         }
         .custom-dropdown-option {
-            padding: 8px 12px;
+            padding: 10px 14px;
             font-size: 14px;
             cursor: pointer;
             user-select: none;
             color: #323130;
         }
         .custom-dropdown-option:hover {
-            background-color: #f3f2f1;
+            background-color: #F0F4FF;
         }
         .custom-dropdown-option.no-results {
             color: #a19f9d;
@@ -350,19 +362,20 @@
         .dropdown-search-box input {
             padding: 6px 10px;
             font-size: 13px;
-            border: 1px solid #8a8886;
-            border-radius: 2px;
+            border: 1px solid #C7D7F5;
+            border-radius: 6px;
+            background-color: #ffffff;
         }
 
         /* Estrutura Multiselect de Meses */
         .multiselect-container { position: relative; width: 100%; }
-        .multiselect-header { width: 100%; padding: 10px 32px 10px 38px; border: 1px solid #8a8886; border-radius: 2px; font-size: 14px; background-color: #ffffff; color: #323130; text-align: left; cursor: pointer; box-sizing: border-box; white-space: normal; }
+        .multiselect-header { width: 100%; padding: 12px 32px 12px 42px; border: 1px solid #C7D7F5; border-radius: 8px; font-size: 14px; background-color: #F0F4FF; color: #323130; text-align: left; cursor: pointer; box-sizing: border-box; white-space: normal; }
         .multiselect-header.has-selection { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .multiselect-header::after { content: "▼"; font-size: 10px; position: absolute; right: 12px; top: 14px; color: #605e5c; pointer-events: none; }
-        .multiselect-header.disabled { background-color: #f3f2f1; border-color: #c8c6c4; color: #a19f9d; cursor: not-allowed; pointer-events: none; }
-        .multiselect-options { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #8a8886; box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 1000; max-height: 200px; overflow-y: auto; box-sizing: border-box; border-radius: 0 0 2px 2px; }
-        .multiselect-option { padding: 8px 12px; display: flex; align-items: center; font-size: 14px; cursor: pointer; user-select: none; }
-        .multiselect-option:hover { background-color: #f3f2f1; }
+        .multiselect-header::after { content: "▼"; font-size: 10px; position: absolute; right: 14px; top: 16px; color: #605e5c; pointer-events: none; }
+        .multiselect-header.disabled { background-color: #E8EEFB; border-color: #D3E0FA; color: #a19f9d; cursor: not-allowed; pointer-events: none; }
+        .multiselect-options { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #C7D7F5; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; box-sizing: border-box; border-radius: 8px; margin-top: 4px; }
+        .multiselect-option { padding: 10px 14px; display: flex; align-items: center; font-size: 14px; cursor: pointer; user-select: none; }
+        .multiselect-option:hover { background-color: #F0F4FF; }
         .multiselect-option input { width: auto; margin-right: 10px; cursor: pointer; padding: 0; }
         .multiselect-option.all-option { border-bottom: 1px solid #edebe9; font-weight: 600; color: #1E3A8A; }
         
@@ -386,37 +399,35 @@
             min-width: 180px;
         }
 
-        /* Botão Submit com o Verde #22C55E ativo */
+        /* Otimização Isolada do Botão Submit Baseado na Imagem */
+        .action-container {
+            width: 100%;
+            margin-top: 20px;
+        }
         .btn-submit {
-            background-color: #22C55E;
+            background-color: #1E3A8A;
             color: #ffffff;
             border: 1px solid transparent;
-            padding: 10px 24px;
+            padding: 14px 24px;
             font-size: 14px;
-            font-weight: 600;
-            border-radius: 2px;
+            font-weight: 700;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            transition: background-color 0.1s ease;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.15s ease;
         }
-        .btn-submit img {
-            width: 16px;
-            height: 16px;
-            filter: brightness(0) invert(1);
-        }
-        .btn-submit:hover:not(:disabled) { background-color: #16a34a; }
-        .btn-submit:active:not(:disabled) { background-color: #15803d; }
+        .btn-submit:hover:not(:disabled) { background-color: #162a63; }
+        .btn-submit:active:not(:disabled) { background-color: #0f1e47; }
         .btn-submit:disabled {
             background-color: #f3f2f1;
             color: #a19f9d;
             border-color: #c8c6c4;
             cursor: not-allowed;
-        }
-        .btn-submit:disabled img {
-            filter: none;
-            opacity: 0.4;
         }
 
         .status-message {
@@ -454,7 +465,7 @@
         .payment-details-box {
             background-color: #ffffff;
             border: 1px solid #c8c6c4;
-            border-radius: 4px;
+            border-radius: 8px;
             padding: 24px;
             margin-bottom: 20px;
         }
@@ -514,7 +525,7 @@
             padding: 10px 20px;
             font-size: 14px;
             font-weight: 600;
-            border-radius: 2px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.1s ease;
         }
@@ -639,7 +650,7 @@
                 <label for="descontoPercentInput">Desconto Aplicado (%)</label>
                 <div class="input-with-icon">
                     <input type="text" id="descontoPercentInput" readonly title="Desconto Aplicado" placeholder="—" style="padding-left: 14px; padding-right: 38px;">
-                    <img class="input-icon-img" src="https://img.icons8.com/material-rounded/128/1E3A8A/percentage.png" alt="Percentage Icon" style="right: 12px; left: auto;">
+                    <img class="input-icon-img" src="https://img.icons8.com/material-rounded/128/1E3A8A/percentage.png" alt="Percentage Icon" style="right: 14px; left: auto;">
                 </div>
             </div>
 
@@ -705,7 +716,6 @@
     <div class="action-container">
         <button type="button" id="submitBtn" class="btn-submit" disabled>
             <span>Gerar Dados de Pagamento</span>
-            <img src="https://img.icons8.com/material-rounded/128/1E3A8A/paper-plane.png" alt="Submit Icon">
         </button>
     </div>
     
@@ -1297,7 +1307,4 @@
     window.addEventListener("DOMContentLoaded", setupInitialGate);</script></body></html>
 
 
-
-
-
-
+    
