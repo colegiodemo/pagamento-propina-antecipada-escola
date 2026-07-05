@@ -784,8 +784,8 @@
     const statusLog = document.getElementById("statusLog");
     const submitBtn = document.getElementById("submitBtn");
     const precoMensalInput = document.getElementById("precoMensalInput");
-    const descuentoPercentInput = document.getElementById("descontoPercentInput");
-    const descuentoValorInput = document.getElementById("descontoValorInput");
+    const descontoPercentInput = document.getElementById("descontoPercentInput");
+    const descontoValorInput = document.getElementById("descontoValorInput");
     const valorTotalInput = document.getElementById("valorTotalInput");
     const emailInput = document.getElementById("emailInput");
     const emailConfirmInput = document.getElementById("emailConfirmInput");
@@ -854,7 +854,7 @@
         showStatus("A carregar dados...", "#605e5c", "#f3f2f1");
         
         const payload = { 
-            "Flag": "GetSPOData-AnteciparPropina", 
+            "Flag": "GetSPOData-Aluno", 
             "Source": "F9A3C7E1D0B4F6A2C8E1D9F7A3B6C4E0F1A9D3C7E5B2F8A0C6D4E1B9F703A5C2" 
         };
 
@@ -1295,6 +1295,3 @@
 
     // Inicialização segura
     window.addEventListener("DOMContentLoaded", setupInitialGate);</script></body></html>
-
-
-
